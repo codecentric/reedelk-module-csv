@@ -1,0 +1,10 @@
+{
+  "id": "bbaaff1e-a601-4082-b0bf-6e2e6fc674cc",
+  "title": "Hello World Listener",
+  "implementor": "com.reedelk.rest.component.RESTListenerConfiguration",
+  "host": "localhost",
+  "port": 8282,
+  "protocol": "HTTP",
+  "basePath": "/api",
+  "keepAlive": true
+}

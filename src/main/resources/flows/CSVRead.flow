@@ -1,0 +1,38 @@
+{
+  "id": "b5794252-1439-491c-bb25-8eec628d1ff5",
+  "title": "CSV Read",
+  "description": "CSV Read Flow",
+  "flow": [
+    {
+      "implementor": "com.reedelk.rest.component.RESTListener",
+      "description": "REST Listener",
+      "configuration": {"ref": "bbaaff1e-a601-4082-b0bf-6e2e6fc674cc"},
+      "path": "/csv",
+      "method": "POST",
+      "streaming": "AUTO",
+      "response": {
+        "body": "#[message.payload()]",
+        "status": 200
+      },
+      "errorResponse": {
+        "body": "#[error]",
+        "status": 500
+      }
+    },
+    {
+      "implementor": "com.reedelk.csv.component.CSVRead",
+      "description": "CSV Read",
+      "file": ""
+    },
+    {
+      "implementor": "com.reedelk.core.component.PayloadSet",
+      "description": "Payload Set",
+      "mimeType": "*/*",
+      "payload": "#[message.payload()[3]]"
+    },
+    {
+      "implementor": "com.reedelk.csv.component.CSVWrite",
+      "description": "CSV Write"
+    }
+  ]
+}
