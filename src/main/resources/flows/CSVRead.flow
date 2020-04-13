@@ -33,6 +33,22 @@
     {
       "implementor": "com.reedelk.csv.component.CSVWrite",
       "description": "CSV Write"
+    },
+    {
+      "implementor": "com.reedelk.core.component.ResourceReadDynamic",
+      "description": "Resource Read Dynamic",
+      "resourceFile": "#['/assets/sample.jpg']",
+      "autoMimeType": true
+    },
+    {
+      "implementor": "com.reedelk.core.component.ResourceReadText",
+      "description": "Resource Read Text",
+      "autoMimeType": true
+    },
+    {
+      "implementor": "com.reedelk.core.component.ResourceReadText",
+      "description": "Resource Read Text",
+      "autoMimeType": true
     }
   ]
 }
