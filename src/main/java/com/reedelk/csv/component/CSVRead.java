@@ -36,7 +36,9 @@ public class CSVRead implements ProcessorSync {
     @Example("MONGODB_CSV")
     private Format format;
 
-    @Property("CSV File")
+    @Property("CSV File In")
+    @Hint("/var/files/csv/my-csv-file.csv")
+    @Description("File to read the CSV data from")
     private DynamicString file;
 
     @Property("Delimiter")
@@ -116,7 +118,7 @@ public class CSVRead implements ProcessorSync {
             List<String> headerNames = parse.getHeaderNames();
 
             List<DataRow> mapRows = csvRecordsToRows(records, headerNames);
-
+// TODO: Mime type text CSV ?
             // TODO: Add attributes
             return MessageBuilder.get()
                     .withList(mapRows, DataRow.class)

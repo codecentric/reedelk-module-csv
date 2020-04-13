@@ -1,6 +1,6 @@
 {
   "id": "b5794252-1439-491c-bb25-8eec628d1ff5",
-  "title": "CSV Read",
+  "title": "CSV Write",
   "description": "CSV Read Flow",
   "flow": [
     {
@@ -20,35 +20,14 @@
       }
     },
     {
-      "implementor": "com.reedelk.csv.component.CSVRead",
-      "description": "CSV Read",
-      "file": ""
-    },
-    {
       "implementor": "com.reedelk.core.component.PayloadSet",
       "description": "Payload Set",
       "mimeType": "*/*",
-      "payload": "#[message.payload()[3]]"
+      "payload": "#[[['A one', 'A two', 'A three'], ['B one', 'B two', 'B three']]]"
     },
     {
       "implementor": "com.reedelk.csv.component.CSVWrite",
       "description": "CSV Write"
-    },
-    {
-      "implementor": "com.reedelk.core.component.ResourceReadDynamic",
-      "description": "Resource Read Dynamic",
-      "resourceFile": "#['/assets/sample.jpg']",
-      "autoMimeType": true
-    },
-    {
-      "implementor": "com.reedelk.core.component.ResourceReadText",
-      "description": "Resource Read Text",
-      "autoMimeType": true
-    },
-    {
-      "implementor": "com.reedelk.core.component.ResourceReadText",
-      "description": "Resource Read Text",
-      "autoMimeType": true
     }
   ]
 }
