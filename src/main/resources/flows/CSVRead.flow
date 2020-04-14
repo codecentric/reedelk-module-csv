@@ -39,13 +39,7 @@
     {
       "implementor": "com.reedelk.csv.component.CSVWrite",
       "description": "CSV Write",
-      "includeHeaders": true,
-      "headers": [
-        "Player",
-        "Game",
-        "Time",
-        "Another"
-      ]
+      "includeHeaders": true
     }
   ]
 }

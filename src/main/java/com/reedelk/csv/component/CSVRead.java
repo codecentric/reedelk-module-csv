@@ -88,20 +88,21 @@ public class CSVRead implements ProcessorSync {
     @Override
     public Message apply(FlowContext flowContext, Message message) {
         if (DynamicValueUtils.isNotNullOrBlank(file)) {
-            return readFromFile(flowContext, message);
+            String filePathAndName = scriptService.evaluate(file, flowContext, message)
+                    .orElseThrow(() -> {
+                        String error = FILE_PATH_EMPTY.format(file.value());
+                        throw new CSVReadException(error);
+                    });
+            return readFromFile(filePathAndName);
         } else {
-            return readFromMessagePayload(message);
+            // We must convert the payload into a string if it is not already.
+            Object payload = message.payload();
+            String payloadAsString = converter.convert(payload, String.class);
+            return readFromMessagePayload(payloadAsString);
         }
     }
 
-    /**
-     * Note that we must convert the payload into a string if it is not already.
-     */
-    private Message readFromMessagePayload(Message message) {
-        // We must convert the payload into a string if it is not already.
-        Object payload = message.payload();
-        String payloadAsString = converter.convert(payload, String.class);
-
+    private Message readFromMessagePayload(String payloadAsString) {
         Map<String, Serializable> componentAttributes = ImmutableMap.of();
         try (Reader input = new StringReader(payloadAsString)) {
             return parse(componentAttributes, input);
@@ -111,16 +112,9 @@ public class CSVRead implements ProcessorSync {
         }
     }
 
-    private Message readFromFile(FlowContext flowContext, Message message) {
-        String filePathAndName = scriptService.evaluate(file, flowContext, message)
-                .orElseThrow(() -> {
-                    String error = FILE_PATH_EMPTY.format(file.value());
-                    throw new CSVReadException(error);
-                });
-
+    private Message readFromFile(String filePathAndName) {
         Map<String, Serializable> componentAttributes =
                 ImmutableMap.of(CSVReadAttribute.FILE_NAME, filePathAndName);
-
         try (Reader input = new FileReader(filePathAndName)) {
             return parse(componentAttributes, input);
         } catch (IOException exception) {
