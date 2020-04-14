@@ -9,10 +9,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public enum CSVs {
 
-    SAMPLE() {
+    SAMPLE_WITH_HEADER() {
         @Override
         public String path() {
-            return "/example.csv";
+            return "/sample_with_header.csv";
+        }
+    },
+
+    SAMPLE_WITHOUT_HEADER() {
+        @Override
+        public String path() {
+            return "/sample_without_header.csv";
         }
     };
 
