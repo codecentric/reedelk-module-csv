@@ -28,8 +28,13 @@ import java.util.Map;
 
 import static com.reedelk.csv.internal.commons.Messages.CSVRead.*;
 
-@SuppressWarnings("rawtypes")
+
 @ModuleComponent("CSV Read")
+@Description("The CSV Read component can read a CSV file from the file system " +
+        "or from the message payload data. There are several supported CSV formats such as " +
+        "Excel, MongoDB and MySQL. The component allows to configure the data delimiter " +
+        "and whether to consider the first record as header or not. " +
+        "The output is a list of DataRow objects.")
 @Component(service = CSVRead.class, scope = ServiceScope.PROTOTYPE)
 public class CSVRead implements ProcessorSync {
 
@@ -130,6 +135,7 @@ public class CSVRead implements ProcessorSync {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private Message parse(Map<String, Serializable> componentAttributes, Reader input) {
         List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
         return MessageBuilder.get()
