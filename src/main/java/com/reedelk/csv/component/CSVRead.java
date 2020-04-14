@@ -120,6 +120,7 @@ public class CSVRead implements ProcessorSync {
 
         Map<String, Serializable> componentAttributes =
                 ImmutableMap.of(CSVReadAttribute.FILE_NAME, filePathAndName);
+
         try (Reader input = new FileReader(filePathAndName)) {
             return parse(componentAttributes, input);
         } catch (IOException exception) {

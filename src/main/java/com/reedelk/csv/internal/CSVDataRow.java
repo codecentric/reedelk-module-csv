@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class CSVDataRow implements DataRow<String> {
 
-    private final CSVRowMetadata attributes;
+    private final CSVMetadata attributes;
     private final List<String> values;
 
-    public CSVDataRow(CSVRowMetadata attributes, List<String> values) {
+    public CSVDataRow(CSVMetadata attributes, List<String> values) {
         this.attributes = attributes;
         this.values = values;
     }
