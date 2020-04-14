@@ -25,7 +25,6 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -256,6 +255,11 @@ class CSVReadTest {
                 asList("Bud Grimsby","Center Field","\"The Reaper\", \"Longneck\"","1910-1917"));
         assertExistRecord(records,
                 asList("Vic Crumb","Shortstop","\"Fat Vic\", \"Icy Hot\"","1911-1912"));
+
+        // Assert that the column names and attributes are mapped correctly.
+        DataRow<String> row = records.get(0);
+        assertThat(row.getColumnNames()).containsExactly("Player Name", "Position", "Nicknames", "Years Active");
+        assertThat(row.getColumnName(1)).isEqualTo("Position");
     }
 
     private Path createTmpFileWithData(String csvData) throws IOException {
