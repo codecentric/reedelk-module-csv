@@ -38,8 +38,7 @@
     },
     {
       "implementor": "com.reedelk.csv.component.CSVWrite",
-      "description": "CSV Write",
-      "includeHeaders": true
+      "description": "CSV Write"
     }
   ]
 }
