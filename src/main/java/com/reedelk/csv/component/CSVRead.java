@@ -1,5 +1,6 @@
 package com.reedelk.csv.component;
 
+import com.reedelk.csv.internal.exception.CSVReadException;
 import com.reedelk.csv.internal.read.CSVFormatBuilder;
 import com.reedelk.csv.internal.read.CSVParser;
 import com.reedelk.csv.internal.read.CSVReadAttribute;
@@ -8,7 +9,6 @@ import com.reedelk.runtime.api.commons.DynamicValueUtils;
 import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
-import com.reedelk.runtime.api.exception.PlatformException;
 import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
@@ -25,6 +25,8 @@ import org.osgi.service.component.annotations.ServiceScope;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
+
+import static com.reedelk.csv.internal.commons.Messages.CSVRead.*;
 
 @SuppressWarnings("rawtypes")
 @ModuleComponent("CSV Read")
@@ -97,43 +99,43 @@ public class CSVRead implements ProcessorSync {
     /**
      * Note that we must convert the payload into a string if it is not already.
      */
-    @SuppressWarnings("rawtypes")
     private Message readFromMessagePayload(Message message) {
         // We must convert the payload into a string if it is not already.
         Object payload = message.payload();
         String payloadAsString = converter.convert(payload, String.class);
 
+        Map<String, Serializable> componentAttributes = ImmutableMap.of();
         try (Reader input = new StringReader(payloadAsString)) {
-            List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
-            return MessageBuilder.get()
-                    .withList(dataRows, DataRow.class, MimeType.TEXT_CSV)
-                    .attributes(new DefaultMessageAttributes(CSVRead.class, ImmutableMap.of()))
-                    .build();
+            return parse(componentAttributes, input);
         } catch (IOException exception) {
-            throw new PlatformException("Error");
+            String error = PAYLOAD_READ_ERROR.format(exception.getMessage());
+            throw new CSVReadException(error, exception);
         }
     }
 
     private Message readFromFile(FlowContext flowContext, Message message) {
-        // We take it from the payload.
         String filePathAndName = scriptService.evaluate(file, flowContext, message)
                 .orElseThrow(() -> {
-                    throw new PlatformException("File was empty.");
+                    String error = FILE_PATH_EMPTY.format(file.value());
+                    throw new CSVReadException(error);
                 });
 
+        Map<String, Serializable> componentAttributes =
+                ImmutableMap.of(CSVReadAttribute.FILE_NAME, filePathAndName);
         try (Reader input = new FileReader(filePathAndName)) {
-            List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
-
-            Map<String, Serializable> componentAttributes = ImmutableMap.of();
-            componentAttributes.put(CSVReadAttribute.FILE_NAME, filePathAndName);
-
-            return MessageBuilder.get()
-                    .withList(dataRows, DataRow.class, MimeType.TEXT_CSV)
-                    .attributes(new DefaultMessageAttributes(CSVRead.class, componentAttributes))
-                    .build();
+            return parse(componentAttributes, input);
         } catch (IOException exception) {
-            throw new PlatformException(exception.getMessage(), exception);
+            String error = FILE_READ_ERROR.format(filePathAndName, exception.getMessage());
+            throw new CSVReadException(error, exception);
         }
+    }
+
+    private Message parse(Map<String, Serializable> componentAttributes, Reader input) {
+        List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
+        return MessageBuilder.get()
+                .withList(dataRows, DataRow.class, MimeType.TEXT_CSV)
+                .attributes(new DefaultMessageAttributes(CSVRead.class, componentAttributes))
+                .build();
     }
 
     public void setTrim(Boolean trim) {
