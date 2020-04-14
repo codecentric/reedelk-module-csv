@@ -1,6 +1,7 @@
 package com.reedelk.csv.internal.read;
 
 import com.reedelk.csv.internal.CSVDataRow;
+import com.reedelk.csv.internal.CSVRowMetadata;
 import com.reedelk.runtime.api.exception.PlatformException;
 import com.reedelk.runtime.api.message.content.DataRow;
 import org.apache.commons.csv.CSVFormat;
@@ -35,16 +36,15 @@ public class CSVParser {
         boolean realFirstRecordAsHeader = Optional.ofNullable(firstRecordAsHeader).orElse(false);
         List<DataRow> mapped = new ArrayList<>();
 
-        for (int start = 0; start < records.size(); start++) {
-            CSVRecord record = records.get(start);
+        for (CSVRecord record : records) {
             List<String> rowData = new ArrayList<>();
             for (int i = 0; i < record.size(); i++) {
                 rowData.add(record.get(i));
             }
 
             CSVDataRow rowDataEntry = realFirstRecordAsHeader ?
-                    new CSVDataRow(headerNames, rowData) :
-                    new CSVDataRow(rowData);
+                    new CSVDataRow(new CSVRowMetadata(headerNames), rowData) :
+                    new CSVDataRow(new CSVRowMetadata(), rowData);
 
             mapped.add(rowDataEntry);
         }
