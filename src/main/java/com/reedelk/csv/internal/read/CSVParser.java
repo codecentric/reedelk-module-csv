@@ -15,6 +15,9 @@ import java.util.Optional;
 
 public class CSVParser {
 
+    private CSVParser() {
+    }
+
     @SuppressWarnings("rawtypes")
     public static List<DataRow> from(CSVFormat csvFormat, Reader input, Boolean firstRecordAsHeader) {
         try {

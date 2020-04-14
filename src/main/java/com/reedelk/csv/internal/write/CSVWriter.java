@@ -14,6 +14,9 @@ import static com.reedelk.csv.internal.commons.Preconditions.checkSuitableTypeOr
 
 public class CSVWriter {
 
+    private CSVWriter() {
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void write(Message message, CSVPrinter csvPrinter, boolean includeHeaders, List<String> headers) throws IOException {
         // We must have a list of lists
