@@ -31,9 +31,6 @@ import static org.mockito.Mockito.lenient;
 @ExtendWith(MockitoExtension.class)
 class CSVWriteTest {
 
-    private static final List<String> HEADERS =
-            asList("Player Name", "Position", "Nicknames", "Years Active");
-
     @Mock
     private FlowContext context;
     @Mock

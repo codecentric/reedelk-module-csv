@@ -8,7 +8,7 @@
       "description": "REST Listener",
       "configuration": {"ref": "bbaaff1e-a601-4082-b0bf-6e2e6fc674cc"},
       "path": "/csv",
-      "method": "GET",
+      "method": "POST",
       "streaming": "AUTO",
       "response": {
         "body": "#[message.payload()]",
@@ -20,21 +20,14 @@
       }
     },
     {
-      "implementor": "com.reedelk.core.component.PayloadSet",
-      "description": "Payload Set",
-      "mimeType": "*/*",
-      "payload": "#[[['one', 'two', 'three'], ['four', 'five', 'six'], ['seven', 'eight', 'nine']]]"
+      "implementor": "com.reedelk.csv.component.CSVRead",
+      "description": "CSV Read"
     },
     {
       "implementor": "com.reedelk.csv.component.CSVWrite",
       "description": "CSV Write",
-      "file": "/Users/lorenzo/Desktop/mycsv.csv",
-      "includeHeaders": true,
-      "headers": [
-        "X",
-        "Y",
-        "Z-Header"
-      ]
+      "file": "/Users/lorenzo/Desktop/out.csv",
+      "delimiter": ""
     }
   ]
 }

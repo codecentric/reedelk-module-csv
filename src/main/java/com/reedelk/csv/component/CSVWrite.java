@@ -45,6 +45,7 @@ public class CSVWrite implements ProcessorSync {
     @Property("CSV Format")
     @DefaultValue("DEFAULT")
     @Example("MONGODB_CSV")
+    @Description("Sets the CSV format of the file to be written.")
     private Format format;
 
     @Property("CSV Output file")
@@ -126,7 +127,7 @@ public class CSVWrite implements ProcessorSync {
         try (FileWriter writer = new FileWriter(filePathAndName);
              CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
 
-            CSVWriter.write(message, csvPrinter, includeHeaders, headers);
+            CSVWriter.write(message, csvPrinter, actualIncludeHeaders, headers);
             Map<String, Serializable> componentAttributes =
                     ImmutableMap.of(CSVWriteAttribute.FILE_NAME, filePathAndName);
             return MessageBuilder.get()

@@ -41,6 +41,7 @@ public class CSVRead implements ProcessorSync {
     @Property("CSV Format")
     @DefaultValue("DEFAULT")
     @Example("MONGODB_CSV")
+    @Description("Sets the CSV format of the file to be read.")
     private Format format;
 
     @Property("CSV Input file")
@@ -127,7 +128,7 @@ public class CSVRead implements ProcessorSync {
     private Message parse(Map<String, Serializable> componentAttributes, Reader input) {
         List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
         return MessageBuilder.get()
-                .withList(dataRows, DataRow.class, MimeType.TEXT_CSV)
+                .withList(dataRows, DataRow.class)
                 .attributes(new DefaultMessageAttributes(CSVRead.class, componentAttributes))
                 .build();
     }
