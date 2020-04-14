@@ -1,18 +1,14 @@
 package com.reedelk.csv.internal.read;
 
-import com.reedelk.csv.component.CSVRead;
 import com.reedelk.csv.component.Format;
 import org.apache.commons.csv.CSVFormat;
 
 import java.util.Optional;
 
-import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireTrue;
-import static com.reedelk.runtime.api.commons.StringUtils.isNotNull;
-
 public class CSVFormatBuilder {
 
     private Format format;
-    private String delimiter;
+    private Character delimiter;
     private Boolean trim;
     private Boolean firstRecordAsHeader;
 
@@ -33,7 +29,7 @@ public class CSVFormatBuilder {
         return this;
     }
 
-    public CSVFormatBuilder delimiter(String delimiter) {
+    public CSVFormatBuilder delimiter(Character delimiter) {
         this.delimiter = delimiter;
         return this;
     }
@@ -44,26 +40,16 @@ public class CSVFormatBuilder {
     }
 
     public CSVFormat build() {
-        requireTrue(CSVRead.class, isDelimiterValid(delimiter), "Delimiter must be a single char");
-
         CSVFormat format = Optional.ofNullable(this.format).orElse(Format.DEFAULT).format();
-        if (isNotNull(delimiter)) {
-            format = format.withDelimiter(delimiter.charAt(0));
-        }
-        if (isTrue(firstRecordAsHeader)) {
-            format = format.withFirstRecordAsHeader();
-        }
-        if (isTrue(trim)) {
-            format = format.withTrim();
-        }
+
+        if (delimiter != null) format = format.withDelimiter(delimiter);
+        if (isTrue(firstRecordAsHeader)) format = format.withFirstRecordAsHeader();
+        if (isTrue(trim)) format = format.withTrim();
+
         return format;
     }
 
     private boolean isTrue(Boolean value) {
         return value != null && value;
-    }
-
-    private boolean isDelimiterValid(String delimiter) {
-        return delimiter == null || delimiter.length() == 1;
     }
 }

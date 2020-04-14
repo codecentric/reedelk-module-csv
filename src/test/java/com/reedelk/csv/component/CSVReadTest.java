@@ -198,7 +198,7 @@ class CSVReadTest {
     void shouldReturnCorrectRecordsWhenCustomDelimiter() {
         // Given
         csvRead.setFirstRecordAsHeader(true);
-        csvRead.setDelimiter(":");
+        csvRead.setDelimiter(':');
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_CUSTOM_DELIMITER.string();

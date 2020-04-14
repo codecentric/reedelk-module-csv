@@ -11,11 +11,9 @@
         <version>0.9.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.reedelk.csv</groupId>
+    <packaging>bundle</packaging>
     <version>0.9.1-SNAPSHOT</version>
     <artifactId>module-csv</artifactId>
-
-    <packaging>bundle</packaging>
 
     <properties>
         <assertj.version>3.11.1</assertj.version>

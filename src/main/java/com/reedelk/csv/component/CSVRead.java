@@ -53,7 +53,7 @@ public class CSVRead implements ProcessorSync {
     @Example(",")
     @DefaultValue(",")
     @Description("The delimiter used in the input data to separate the data on each row.")
-    private String delimiter;
+    private Character delimiter;
 
     @Property("Trim")
     @Example("true")
@@ -150,7 +150,7 @@ public class CSVRead implements ProcessorSync {
         this.file = file;
     }
 
-    public void setDelimiter(String delimiter) {
+    public void setDelimiter(Character delimiter) {
         this.delimiter = delimiter;
     }
 
