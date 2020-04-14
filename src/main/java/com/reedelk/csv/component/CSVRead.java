@@ -61,12 +61,6 @@ public class CSVRead implements ProcessorSync {
     @Description("If true leading and trailing blanks are trimmed for each item in the data.")
     private Boolean trim;
 
-    @Property("Ignore empty lines")
-    @Example("true")
-    @DefaultValue("false")
-    @Description("If true empty lines are ignored from the CSV data.")
-    private Boolean ignoreEmptyLines;
-
     @Property("First record as header")
     @Example("true")
     @DefaultValue("false")
@@ -85,7 +79,6 @@ public class CSVRead implements ProcessorSync {
     public void initialize() {
         csvFormat = CSVFormatBuilder.get()
                 .firstRecordAsHeader(firstRecordAsHeader)
-                .ignoreEmptyLines(ignoreEmptyLines)
                 .delimiter(delimiter)
                 .format(format)
                 .trim(trim)
@@ -158,10 +151,6 @@ public class CSVRead implements ProcessorSync {
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
-    }
-
-    public void setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
-        this.ignoreEmptyLines = ignoreEmptyLines;
     }
 
     public void setFirstRecordAsHeader(Boolean firstRecordAsHeader) {

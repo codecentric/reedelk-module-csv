@@ -95,6 +95,122 @@ class CSVReadTest {
                 asList("Vic Crumb","Shortstop","\"Fat Vic\", \"Icy Hot\"","1911-1912"));
     }
 
+    @Test
+    void shouldCorrectlyIgnoreEmptyLines() {
+        // Given
+        csvRead.initialize();
+
+        String csvContent = CSVs.SAMPLE_WITH_EMPTY_LINES.string();
+        Message input = MessageBuilder.get()
+                .withString(csvContent, MimeType.TEXT_PLAIN)
+                .build();
+
+        // When
+        Message actual = csvRead.apply(context, input);
+
+        // Then
+        List<DataRow<String>> records = actual.payload();
+
+        assertThat(records).hasSize(2);
+
+        assertExistRecord(records,
+                asList("Skippy Peterson","First Base","\"Blue Dog\", \"The Magician\"","1908-1913"));
+        assertExistRecord(records,
+                asList("Vic Crumb","Shortstop","\"Fat Vic\", \"Icy Hot\"","1911-1912"));
+    }
+
+    @Test
+    void shouldCorrectlyTrimContent() {
+        // Given
+        csvRead.setTrim(true);
+        csvRead.initialize();
+
+        String csvContent = CSVs.SAMPLE_WITH_NOT_TRIMMED_CONTENT.string();
+        Message input = MessageBuilder.get()
+                .withString(csvContent, MimeType.TEXT_PLAIN)
+                .build();
+
+        // When
+        Message actual = csvRead.apply(context, input);
+
+        // Then
+        List<DataRow<String>> records = actual.payload();
+
+        assertThat(records).hasSize(2);
+
+        assertExistRecord(records,
+                asList("Skippy Peterson","First Base","\"Blue Dog\", \"The Magician\"","1908-1913"));
+        assertExistRecord(records,
+                asList("Vic Crumb","Shortstop","\"Fat Vic\", \"Icy Hot\"","1911-1912"));
+    }
+
+    @Test
+    void shouldReturnEmptyWhenCsvEmpty() {
+        // Given
+        csvRead.initialize();
+
+        String csvContent = CSVs.SAMPLE_WITH_NO_RECORDS.string();
+        Message input = MessageBuilder.get()
+                .withString(csvContent, MimeType.TEXT_PLAIN)
+                .build();
+
+        // When
+        Message actual = csvRead.apply(context, input);
+
+        // Then
+        List<DataRow<String>> records = actual.payload();
+
+        assertThat(records).isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyWhenCsvEmptyWithHeaders() {
+        // Given
+        csvRead.setFirstRecordAsHeader(true);
+        csvRead.initialize();
+
+        String csvContent = CSVs.SAMPLE_WITH_NO_RECORDS_AND_HEADERS.string();
+        Message input = MessageBuilder.get()
+                .withString(csvContent, MimeType.TEXT_PLAIN)
+                .build();
+
+        // When
+        Message actual = csvRead.apply(context, input);
+
+        // Then
+        List<DataRow<String>> records = actual.payload();
+
+        assertThat(records).isEmpty();
+    }
+
+    @Test
+    void shouldReturnCorrectRecordsWhenCustomDelimiter() {
+        // Given
+        csvRead.setFirstRecordAsHeader(true);
+        csvRead.setDelimiter(":");
+        csvRead.initialize();
+
+        String csvContent = CSVs.SAMPLE_WITH_CUSTOM_DELIMITER.string();
+        Message input = MessageBuilder.get()
+                .withString(csvContent, MimeType.TEXT_PLAIN)
+                .build();
+
+        // When
+        Message actual = csvRead.apply(context, input);
+
+        // Then
+        List<DataRow<String>> records = actual.payload();
+
+        assertThat(records).hasSize(3);
+
+        assertExistRecord(records,
+                asList("Skippy Peterson","First Base","\"Blue Dog\", \"The Magician\"","1908-1913"));
+        assertExistRecord(records,
+                asList("Bud Grimsby","Center Field","\"The Reaper\", \"Longneck\"","1910-1917"));
+        assertExistRecord(records,
+                asList("Vic Crumb","Shortstop","\"Fat Vic\", \"Icy Hot\"","1911-1912"));
+    }
+
     private void assertExistRecord(List<DataRow<String>> records, List<String> headers, List<String> expected) {
         boolean found = records.stream().anyMatch(actual -> {
             List<String> strings = actual.columnNames();

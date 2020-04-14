@@ -14,7 +14,6 @@ public class CSVFormatBuilder {
     private Format format;
     private String delimiter;
     private Boolean trim;
-    private Boolean ignoreEmptyLines;
     private Boolean firstRecordAsHeader;
 
     private CSVFormatBuilder() {
@@ -39,11 +38,6 @@ public class CSVFormatBuilder {
         return this;
     }
 
-    public CSVFormatBuilder ignoreEmptyLines(Boolean ignoreEmptyLines) {
-        this.ignoreEmptyLines = ignoreEmptyLines;
-        return this;
-    }
-
     public CSVFormatBuilder firstRecordAsHeader(Boolean firstRecordAsHeader) {
         this.firstRecordAsHeader = firstRecordAsHeader;
         return this;
@@ -61,9 +55,6 @@ public class CSVFormatBuilder {
         }
         if (isTrue(trim)) {
             format = format.withTrim();
-        }
-        if (isTrue(ignoreEmptyLines)) {
-            format = format.withIgnoreEmptyLines();
         }
         return format;
     }

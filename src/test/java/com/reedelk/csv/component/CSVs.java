@@ -21,6 +21,41 @@ public enum CSVs {
         public String path() {
             return "/sample_without_header.csv";
         }
+    },
+
+    SAMPLE_WITH_EMPTY_LINES() {
+        @Override
+        public String path() {
+            return "/sample_with_empty_lines.csv";
+        }
+    },
+
+    SAMPLE_WITH_NOT_TRIMMED_CONTENT() {
+        @Override
+        public String path() {
+            return "/sample_with_not_trimmed_content.csv";
+        }
+    },
+
+    SAMPLE_WITH_NO_RECORDS() {
+        @Override
+        public String path() {
+            return "/sample_with_no_records.csv";
+        }
+    },
+
+    SAMPLE_WITH_NO_RECORDS_AND_HEADERS() {
+        @Override
+        public String path() {
+            return "/sample_with_no_records_and_headers.csv";
+        }
+    },
+
+    SAMPLE_WITH_CUSTOM_DELIMITER() {
+        @Override
+        public String path() {
+            return "/sample_with_custom_delimiter.csv";
+        }
     };
 
     public URL url() {
