@@ -35,6 +35,10 @@ import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.require
 import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireTrue;
 
 @ModuleComponent("CSV Write")
+@Description("The CSV Write component can write CSV data to the file system " +
+        "or into the message payload data. There are several supported CSV formats such as " +
+        "Excel, MongoDB and MySQL. The component allows to configure the data delimiter " +
+        "and whether to add CSV headers at the beginning of the output file or not. ")
 @Component(service = CSVWrite.class, scope = ServiceScope.PROTOTYPE)
 public class CSVWrite implements ProcessorSync {
 
