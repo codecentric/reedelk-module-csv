@@ -36,12 +36,6 @@ public class CSVParser {
         List<DataRow> mapped = new ArrayList<>();
 
         for (int start = 0; start < records.size(); start++) {
-
-            if (realFirstRecordAsHeader && start == 0) {
-                // We skip if the first record contains the headers.
-                continue;
-            }
-
             CSVRecord record = records.get(start);
             List<String> rowData = new ArrayList<>();
             for (int i = 0; i < record.size(); i++) {

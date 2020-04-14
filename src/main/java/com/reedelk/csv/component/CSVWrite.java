@@ -60,7 +60,7 @@ public class CSVWrite implements ProcessorSync {
                 }
                 if (object instanceof DataRow) {
                     DataRow row = (DataRow) object;
-                    csvPrinter.printRecord(row.row());
+                    csvPrinter.printRecord(row.values());
                 }
             }
 

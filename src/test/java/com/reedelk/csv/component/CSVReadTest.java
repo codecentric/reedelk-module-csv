@@ -46,6 +46,9 @@ class CSVReadTest {
     @Test
     void shouldCorrectlyReadCSVFromPayload() {
         // Given
+        csvRead.setFirstRecordAsHeader(true);
+        csvRead.initialize();
+
         String csvContent = CSVs.SAMPLE.string();
         Message input = MessageBuilder.get()
                 .withString(csvContent, MimeType.TEXT_PLAIN)
@@ -76,7 +79,7 @@ class CSVReadTest {
     }
 
     private boolean areEquals(List<String> expected, DataRow<String> actual) {
-        List<String> row = actual.row();
+        List<String> row = actual.values();
         for (int i = 0; i < row.size(); i++) {
             String actualValue = row.get(i);
             String expectedValue = expected.get(i);
