@@ -17,6 +17,7 @@
 
     <properties>
         <assertj.version>3.11.1</assertj.version>
+        <commons.csv.version>1.8</commons.csv.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <mockito.version>2.23.0</mockito.version>
@@ -42,27 +43,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>module-core</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>module-rest</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.reedelk</groupId>
-            <artifactId>module-mail</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
-            <version>1.8</version>
+            <version>${commons.csv.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
