@@ -1,4 +1,4 @@
-package com.reedelk.csv.internal.read;
+package com.reedelk.csv.internal;
 
 import com.reedelk.csv.component.Format;
 import org.apache.commons.csv.CSVFormat;

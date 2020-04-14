@@ -1,7 +1,7 @@
 package com.reedelk.csv.component;
 
 import com.reedelk.csv.internal.exception.CSVWriteException;
-import com.reedelk.csv.internal.read.CSVFormatBuilder;
+import com.reedelk.csv.internal.CSVFormatBuilder;
 import com.reedelk.csv.internal.write.CSVWriteAttribute;
 import com.reedelk.csv.internal.write.CSVWriter;
 import com.reedelk.runtime.api.annotation.*;
