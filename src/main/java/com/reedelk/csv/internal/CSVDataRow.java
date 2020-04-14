@@ -6,16 +6,16 @@ import java.util.List;
 
 public class CSVDataRow implements DataRow<String> {
 
-    private final List<String> headerNames;
+    private final List<String> columnNames;
     private final List<String> values;
 
-    public CSVDataRow(List<String> headerNames, List<String> values) {
-        this.headerNames = headerNames;
+    public CSVDataRow(List<String> columnNames, List<String> values) {
+        this.columnNames = columnNames;
         this.values = values;
     }
 
     public CSVDataRow(List<String> values) {
-        this.headerNames = null;
+        this.columnNames = null;
         this.values = values;
     }
 
@@ -26,8 +26,8 @@ public class CSVDataRow implements DataRow<String> {
 
     @Override
     public String columnName(int i) {
-        if (headerNames != null) {
-            return headerNames.get(i);
+        if (columnNames != null) {
+            return columnNames.get(i);
         } else {
             throw new IllegalArgumentException("Header names not available");
         }
@@ -35,8 +35,8 @@ public class CSVDataRow implements DataRow<String> {
 
     @Override
     public List<String> columnNames() {
-        if (headerNames != null) {
-            return headerNames;
+        if (columnNames != null) {
+            return columnNames;
         } else {
             throw new IllegalArgumentException("Header names not available");
         }
@@ -49,12 +49,12 @@ public class CSVDataRow implements DataRow<String> {
 
     @Override
     public String getByColumnName(String columnName) {
-        if (headerNames == null) {
+        if (columnNames == null) {
             throw new IllegalArgumentException("Header names not available");
         }
         int index = -1;
-        for (int i = 0; i < headerNames.size(); i++) {
-            if (headerNames.get(i).equals(columnName)) {
+        for (int i = 0; i < columnNames.size(); i++) {
+            if (columnNames.get(i).equals(columnName)) {
                 index = i;
                 break;
             }
@@ -66,20 +66,27 @@ public class CSVDataRow implements DataRow<String> {
     }
 
     @Override
-    public List<String> row() {
+    public List<String> getColumnNames() {
+        return columnNames;
+    }
+
+    @Override
+    public List<String> values() {
         return values;
     }
 
     @Override
     public String toString() {
-        if (headerNames != null) {
+        // Column names might be null when the CSV file
+        // does not start with column names.
+        if (columnNames != null) {
             return "CSVDataRow{" +
-                    "headerNames=" + headerNames +
+                    "columnNames=" + columnNames +
                     ", values=" + values +
                     '}';
         } else {
             return "CSVDataRow{" +
-                    ", values=" + values +
+                    "values=" + values +
                     '}';
         }
     }
