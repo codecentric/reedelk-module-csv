@@ -1,7 +1,7 @@
 package com.reedelk.csv.component;
 
-import com.reedelk.csv.internal.exception.CSVReadException;
 import com.reedelk.csv.internal.CSVFormatBuilder;
+import com.reedelk.csv.internal.exception.CSVReadException;
 import com.reedelk.csv.internal.read.CSVParser;
 import com.reedelk.csv.internal.read.CSVReadAttribute;
 import com.reedelk.runtime.api.annotation.*;
@@ -77,7 +77,7 @@ public class CSVRead implements ProcessorSync {
 
     @Override
     public void initialize() {
-        csvFormat = CSVFormatBuilder.get(CSVRead.class)
+        csvFormat = CSVFormatBuilder.get()
                 .firstRecordAsHeader(firstRecordAsHeader)
                 .delimiter(delimiter)
                 .format(format)

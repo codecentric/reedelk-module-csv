@@ -13,11 +13,15 @@ import java.util.List;
 public class CSVWriter {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void write(Message message, CSVPrinter csvPrinter) throws IOException {
+    public static void write(Message message, CSVPrinter csvPrinter, boolean includeHeaders, List<String> headers) throws IOException {
         // We must have a list of lists
         TypedContent<?,?> payload = message.content();
         if (!(payload instanceof ListContent)) {
             throw new PlatformException("Payload must be list content");
+        }
+
+        if (includeHeaders) {
+            csvPrinter.printRecord(headers);
         }
 
         ListContent<Object> list = (ListContent<Object>) payload;

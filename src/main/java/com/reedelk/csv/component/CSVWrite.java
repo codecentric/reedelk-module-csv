@@ -28,8 +28,11 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.reedelk.csv.internal.commons.Messages.CSVWrite.*;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireTrue;
 
 @ModuleComponent("CSV Write")
 @Component(service = CSVWrite.class, scope = ServiceScope.PROTOTYPE)
@@ -69,14 +72,20 @@ public class CSVWrite implements ProcessorSync {
 
     private CSVFormat csvFormat;
 
+    private boolean actualIncludeHeaders;
+
     @Override
     public void initialize() {
-        csvFormat = CSVFormatBuilder.get(CSVWrite.class)
-                .includeHeaders(includeHeaders)
+        csvFormat = CSVFormatBuilder.get()
                 .delimiter(delimiter)
-                .headers(headers)
                 .format(format)
                 .build();
+
+        actualIncludeHeaders = Optional.ofNullable(includeHeaders).orElse(false);
+        if (actualIncludeHeaders) {
+            requireNotNull(CSVWrite.class, headers, "Headers must be defined");
+            requireTrue(CSVWrite.class, !headers.isEmpty(), "Headers must be specified");
+        }
     }
 
     @Override
@@ -97,7 +106,8 @@ public class CSVWrite implements ProcessorSync {
         try (StringWriter writer = new StringWriter();
              CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
 
-            CSVWriter.write(message, csvPrinter);
+
+            CSVWriter.write(message, csvPrinter, actualIncludeHeaders, headers);
             String csv = writer.toString();
             return MessageBuilder.get()
                     .withString(csv, MimeType.TEXT_CSV)
@@ -113,7 +123,7 @@ public class CSVWrite implements ProcessorSync {
         try (FileWriter writer = new FileWriter(filePathAndName);
              CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
 
-            CSVWriter.write(message, csvPrinter);
+            CSVWriter.write(message, csvPrinter, includeHeaders, headers);
             Map<String, Serializable> componentAttributes =
                     ImmutableMap.of(CSVWriteAttribute.FILE_NAME, filePathAndName);
             return MessageBuilder.get()

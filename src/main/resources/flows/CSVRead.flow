@@ -20,25 +20,21 @@
       }
     },
     {
-      "implementor": "com.reedelk.core.component.ResourceReadText",
-      "description": "Resource Read Text",
-      "resourceFile": "assets/CSVWithoutHeader.csv",
-      "autoMimeType": true
-    },
-    {
-      "implementor": "com.reedelk.csv.component.CSVRead",
-      "description": "CSV Read my super duper CSV read co",
-      "file": ""
-    },
-    {
       "implementor": "com.reedelk.core.component.PayloadSet",
       "description": "Payload Set",
-      "mimeType": "text/plain",
-      "payload": "#[message.payload()]"
+      "mimeType": "*/*",
+      "payload": "#[[['one', 'two', 'three'], ['four', 'five', 'six'], ['seven', 'eight', 'nine']]]"
     },
     {
       "implementor": "com.reedelk.csv.component.CSVWrite",
-      "description": "CSV Write"
+      "description": "CSV Write",
+      "file": "/Users/lorenzo/Desktop/mycsv.csv",
+      "includeHeaders": true,
+      "headers": [
+        "X",
+        "Y",
+        "Z-Header"
+      ]
     }
   ]
 }
