@@ -10,10 +10,11 @@ public class CSVFormatBuilder {
 
     private Format format;
     private Character delimiter;
+    private List<String> headers;
+
     private Boolean trim;
     private Boolean includeHeaders;
     private Boolean firstRecordAsHeader;
-    private List<String> headers;
 
     private CSVFormatBuilder() {
     }
