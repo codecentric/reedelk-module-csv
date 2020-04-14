@@ -87,8 +87,8 @@ public class CSVWrite implements ProcessorSync {
 
         actualIncludeHeaders = Optional.ofNullable(includeHeaders).orElse(false);
         if (actualIncludeHeaders) {
-            requireNotNull(CSVWrite.class, headers, "Headers must be defined");
-            requireTrue(CSVWrite.class, !headers.isEmpty(), "Headers must be specified");
+            requireNotNull(CSVWrite.class, headers, "headers list must be defined and not be empty");
+            requireTrue(CSVWrite.class, !headers.isEmpty(), "headers list must not be empty");
         }
     }
 

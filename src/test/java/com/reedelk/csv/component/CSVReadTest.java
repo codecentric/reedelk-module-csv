@@ -40,7 +40,7 @@ class CSVReadTest {
     @Mock
     private ScriptEngineService scriptService;
 
-    private CSVRead csvRead = new CSVRead();
+    private CSVRead csvRead;
 
     @BeforeEach
     void setUp() {
