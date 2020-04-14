@@ -1,13 +1,18 @@
 package com.reedelk.csv.internal;
 
 import com.reedelk.csv.component.Format;
+import com.reedelk.runtime.api.component.Component;
 import org.apache.commons.csv.CSVFormat;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
+import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireTrue;
+
 public class CSVFormatBuilder {
 
+    private final Class<? extends Component> componentClazz;
     private Format format;
     private Character delimiter;
     private List<String> headers;
@@ -16,11 +21,12 @@ public class CSVFormatBuilder {
     private Boolean includeHeaders;
     private Boolean firstRecordAsHeader;
 
-    private CSVFormatBuilder() {
+    private CSVFormatBuilder(Class<? extends Component> componentClazz) {
+        this.componentClazz = componentClazz;
     }
 
-    public static CSVFormatBuilder get() {
-        return new CSVFormatBuilder();
+    public static CSVFormatBuilder get(Class<? extends Component> componentClazz) {
+        return new CSVFormatBuilder(componentClazz);
     }
 
     public CSVFormatBuilder trim(Boolean trim) {
@@ -59,6 +65,11 @@ public class CSVFormatBuilder {
         if (delimiter != null) format = format.withDelimiter(delimiter);
         if (isTrue(firstRecordAsHeader)) format = format.withFirstRecordAsHeader();
         if (isTrue(trim)) format = format.withTrim();
+        if (isTrue(includeHeaders)) {
+            requireNotNull(componentClazz, headers, "Headers must be defined");
+            requireTrue(componentClazz, !headers.isEmpty(), "Headers must be specified");
+            format.withHeader(headers.toArray(new String[]{}));
+        }
 
         return format;
     }

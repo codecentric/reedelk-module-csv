@@ -30,4 +30,22 @@ public class Messages {
             return formatMessage(msg, args);
         }
     }
+
+    public enum CSVWrite implements FormattedMessage {
+
+        FILE_WRITE_ERROR("Could not write to CSV file=[%s], cause=[%s]."),
+        FILE_PATH_EMPTY("Could not write to CSV file. The file path was empty (DynamicValue=[%s])."),
+        PAYLOAD_WRITE_ERROR("Could not write CSV into message payload, cause=[%s].");
+
+        private String msg;
+
+        CSVWrite(String msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public String format(Object... args) {
+            return formatMessage(msg, args);
+        }
+    }
 }

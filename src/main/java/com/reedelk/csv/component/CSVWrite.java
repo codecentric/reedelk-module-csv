@@ -1,7 +1,7 @@
 package com.reedelk.csv.component;
 
-import com.reedelk.csv.internal.exception.CSVWriteException;
 import com.reedelk.csv.internal.CSVFormatBuilder;
+import com.reedelk.csv.internal.exception.CSVWriteException;
 import com.reedelk.csv.internal.write.CSVWriteAttribute;
 import com.reedelk.csv.internal.write.CSVWriter;
 import com.reedelk.runtime.api.annotation.*;
@@ -29,7 +29,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
-import static com.reedelk.csv.internal.commons.Messages.CSVRead.FILE_PATH_EMPTY;
+import static com.reedelk.csv.internal.commons.Messages.CSVWrite.*;
 
 @ModuleComponent("CSV Write")
 @Component(service = CSVWrite.class, scope = ServiceScope.PROTOTYPE)
@@ -71,7 +71,7 @@ public class CSVWrite implements ProcessorSync {
 
     @Override
     public void initialize() {
-        csvFormat = CSVFormatBuilder.get()
+        csvFormat = CSVFormatBuilder.get(CSVWrite.class)
                 .includeHeaders(includeHeaders)
                 .delimiter(delimiter)
                 .headers(headers)
@@ -82,13 +82,12 @@ public class CSVWrite implements ProcessorSync {
     @Override
     public Message apply(FlowContext flowContext, Message message) {
         if (DynamicValueUtils.isNotNullOrBlank(file)) {
-            String filePathAndName = scriptService.evaluate(file, flowContext, message)
-                    .orElseThrow(() -> {
+            String filePathAndName =
+                    scriptService.evaluate(file, flowContext, message).orElseThrow(() -> {
                         String error = FILE_PATH_EMPTY.format(file.value());
                         throw new CSVWriteException(error);
                     });
             return writeToFile(message, filePathAndName);
-
         } else {
             return writeToMessage(message);
         }
@@ -105,7 +104,7 @@ public class CSVWrite implements ProcessorSync {
                     .build();
 
         } catch (IOException exception) {
-            String error = "";
+            String error = PAYLOAD_WRITE_ERROR.format(exception.getMessage());
             throw new CSVWriteException(error, exception);
         }
     }
@@ -123,7 +122,7 @@ public class CSVWrite implements ProcessorSync {
                     .build();
 
         } catch (IOException exception) {
-            String error = "";
+            String error = FILE_WRITE_ERROR.format(exception.getMessage(), exception.getMessage());
             throw new CSVWriteException(error, exception);
         }
     }

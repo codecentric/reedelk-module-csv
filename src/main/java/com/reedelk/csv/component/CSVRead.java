@@ -77,7 +77,7 @@ public class CSVRead implements ProcessorSync {
 
     @Override
     public void initialize() {
-        csvFormat = CSVFormatBuilder.get()
+        csvFormat = CSVFormatBuilder.get(CSVRead.class)
                 .firstRecordAsHeader(firstRecordAsHeader)
                 .delimiter(delimiter)
                 .format(format)
