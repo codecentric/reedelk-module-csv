@@ -2,30 +2,30 @@ package com.reedelk.csv.component;
 
 import com.reedelk.csv.internal.CSVDataRow;
 import com.reedelk.csv.internal.CSVMetadata;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ConfigurationException;
 import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.content.DataRow;
 import com.reedelk.runtime.api.script.ScriptEngineService;
+import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
@@ -219,5 +219,46 @@ class CSVWriteTest {
                 "Header 1,Header 3\r\n" +
                 "one,three\r\n" +
                 "four,six\r\n");
+    }
+
+    @Test
+    void shouldWriteDataToFile() throws IOException {
+        // Given
+        Path tmpFilePath = createTmpFilePath();
+        DynamicString dynamicFile = DynamicString.from(tmpFilePath.toString());
+        csvWrite.setHeaders(Arrays.asList("Header 1", "Header 3"));
+        csvWrite.setIncludeHeaders(true);
+        csvWrite.setFile(dynamicFile);
+        csvWrite.initialize();
+
+        List<String> row1 = Arrays.asList("one", "two");
+        List<String> row2 = Arrays.asList("four", "five");
+        List<List> rows = Arrays.asList(row1, row2);
+
+        Message input = MessageBuilder.get()
+                .withList(rows, List.class)
+                .build();
+
+        doAnswer(invocation -> Optional.of(tmpFilePath.toString()))
+                .when(scriptService)
+                .evaluate(dynamicFile, context, input);
+
+        // When
+        Message actual = csvWrite.apply(context, input);
+
+        // Then
+        String payload = actual.payload();
+        assertThat(payload).isNull();
+
+        String writtenCsv = new String(Files.readAllBytes(tmpFilePath));
+        assertThat(writtenCsv).isEqualTo(
+                "Header 1,Header 3\r\n" +
+                "one,two\r\n" +
+                "four,five\r\n");
+    }
+
+    private Path createTmpFilePath() {
+        String tmpFileName = UUID.randomUUID().toString() + ".csv";
+        return Paths.get(System.getProperty("java.io.tmpdir"), tmpFileName);
     }
 }
