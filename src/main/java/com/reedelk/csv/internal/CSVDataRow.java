@@ -36,7 +36,7 @@ public class CSVDataRow implements DataRow<String> {
         if (attributes.hasColumnNames()) {
             return attributes.columnNames().get(i);
         } else {
-            throw new IllegalArgumentException("Header names not available");
+            throw new IllegalArgumentException("Column names not available");
         }
     }
 
@@ -45,7 +45,7 @@ public class CSVDataRow implements DataRow<String> {
         if (attributes.hasColumnNames()) {
             return attributes.columnNames();
         } else {
-            throw new IllegalArgumentException("Header names not available");
+            throw new IllegalArgumentException("Column names not available");
         }
     }
 
@@ -57,19 +57,15 @@ public class CSVDataRow implements DataRow<String> {
     @Override
     public String getByColumnName(String columnName) {
         if (!attributes.hasColumnNames()) {
-            throw new IllegalArgumentException("Header names not available");
+            throw new IllegalArgumentException("Could not retrieve data by column name because headers are not available");
         }
-        int index = -1;
+
         for (int i = 0; i < attributes.columnNames().size(); i++) {
             if (attributes.columnNames().get(i).equals(columnName)) {
-                index = i;
-                break;
+                return values.get(i);
             }
         }
-        if (index == -1) {
-            throw new IllegalArgumentException("There are no headers with name " + columnName);
-        }
-        return values.get(index);
+        throw new IllegalArgumentException("There are no columns with name '" + columnName + "'");
     }
 
     @Override

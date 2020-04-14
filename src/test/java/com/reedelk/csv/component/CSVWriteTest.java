@@ -1,27 +1,30 @@
 package com.reedelk.csv.component;
 
+import com.reedelk.csv.internal.CSVDataRow;
+import com.reedelk.csv.internal.CSVMetadata;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ConfigurationException;
 import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.content.MimeType;
+import com.reedelk.runtime.api.message.content.DataRow;
 import com.reedelk.runtime.api.script.ScriptEngineService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 
@@ -162,5 +165,59 @@ class CSVWriteTest {
         // Then
         String csv = actual.payload();
         assertThat(csv).isEqualTo("");
+    }
+
+    @Test
+    void shouldWriteDataRowRecordsWithoutHeaders() {
+        // Given
+        csvWrite.initialize();
+
+        CSVMetadata metadata = new CSVMetadata();
+        CSVDataRow row1 = new CSVDataRow(metadata, Arrays.asList("one", "two"));
+        CSVDataRow row2 = new CSVDataRow(metadata, Arrays.asList("three", "four"));
+
+        List<CSVDataRow> rows = Arrays.asList(row1, row2);
+
+        Message input = MessageBuilder.get()
+                .withList(rows, CSVDataRow.class)
+                .build();
+
+        // When
+        Message actual = csvWrite.apply(context, input);
+
+        // Then
+        String csv = actual.payload();
+        assertThat(csv).isEqualTo(
+                "one,two\r\n" +
+                "three,four\r\n");
+    }
+
+    @Test
+    void shouldWriteDataRowRecordsWithHeaders() {
+        // Given
+        csvWrite.setHeaders(Arrays.asList("Header 1", "Header 3"));
+        csvWrite.setIncludeHeaders(true);
+        csvWrite.initialize();
+
+        List<String> headers = Arrays.asList("Header 1", "Header 2", "Header 3");
+        CSVMetadata metadata = new CSVMetadata(headers);
+        CSVDataRow row1 = new CSVDataRow(metadata, Arrays.asList("one", "two", "three"));
+        CSVDataRow row2 = new CSVDataRow(metadata, Arrays.asList("four", "five", "six"));
+
+        List<CSVDataRow> rows = Arrays.asList(row1, row2);
+
+        Message input = MessageBuilder.get()
+                .withList(rows, CSVDataRow.class)
+                .build();
+
+        // When
+        Message actual = csvWrite.apply(context, input);
+
+        // Then
+        String csv = actual.payload();
+        assertThat(csv).isEqualTo(
+                "Header 1,Header 3\r\n" +
+                "one,three\r\n" +
+                "four,six\r\n");
     }
 }

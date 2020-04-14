@@ -7,6 +7,7 @@ import com.reedelk.runtime.api.message.content.TypedContent;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import static com.reedelk.csv.internal.commons.Preconditions.checkSuitableTypeOrThrow;
@@ -19,6 +20,7 @@ public class CSVWriter {
         TypedContent<?,?> content = message.content();
 
         if (includeHeaders) {
+            // If there are headers, we must write them first.
             csvPrinter.printRecord(headers);
         }
 
@@ -37,13 +39,25 @@ public class CSVWriter {
             if (object == null) continue;
 
             if (object instanceof List) {
-                // If include headers, we write the first X items from the list.
                 csvPrinter.printRecord((List<Object>) object);
 
             } else if (object instanceof DataRow) {
-                // IF headers, we get the headers, if not found then nothing
+                // If the object has type DataRow, we might want to write only a few headers,
+                // therefore for each element in the data row we find the matching column index
+                // of the wanted header name of the value and then add it to the list of items
+                // to print in the record.
                 DataRow row = (DataRow) object;
-                csvPrinter.printRecord(row.values());
+                if (includeHeaders) {
+                    Serializable[] printRow = new Serializable[headers.size()];
+                    for (int i = 0; i < headers.size(); i++) {
+                        String headerName = headers.get(i);
+                        Serializable valueForColumn = row.getByColumnName(headerName);
+                        printRow[i] = valueForColumn;
+                    }
+                    csvPrinter.printRecord(printRow);
+                } else {
+                    csvPrinter.printRecord(row.values());
+                }
 
             } else {
                 csvPrinter.printRecord(object);
