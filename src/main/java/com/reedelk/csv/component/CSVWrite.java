@@ -87,8 +87,8 @@ public class CSVWrite implements ProcessorSync {
 
         actualIncludeHeaders = Optional.ofNullable(includeHeaders).orElse(false);
         if (actualIncludeHeaders) {
-            requireNotNull(CSVWrite.class, headers, "headers list must be defined and not be empty");
-            requireTrue(CSVWrite.class, !headers.isEmpty(), "headers list must not be empty");
+            requireNotNull(CSVWrite.class, headers, "header list must be defined and not be empty");
+            requireTrue(CSVWrite.class, !headers.isEmpty(), "header list must not be empty");
         }
     }
 
@@ -109,7 +109,6 @@ public class CSVWrite implements ProcessorSync {
     private Message writeToMessage(Message message) {
         try (StringWriter writer = new StringWriter();
              CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
-
 
             CSVWriter.write(message, csvPrinter, actualIncludeHeaders, headers);
             String csv = writer.toString();

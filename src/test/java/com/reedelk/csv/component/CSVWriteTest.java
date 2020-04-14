@@ -111,7 +111,7 @@ class CSVWriteTest {
 
         // Then
         assertThat(thrown)
-                .hasMessage("CSVWrite (com.reedelk.csv.component.CSVWrite) has a configuration error: headers list must be defined and not be empty");
+                .hasMessage("CSVWrite (com.reedelk.csv.component.CSVWrite) has a configuration error: header list must be defined and not be empty");
     }
 
     @Test
@@ -126,6 +126,6 @@ class CSVWriteTest {
 
         // Then
         assertThat(thrown)
-                .hasMessage("CSVWrite (com.reedelk.csv.component.CSVWrite) has a configuration error: headers list must not be empty");
+                .hasMessage("CSVWrite (com.reedelk.csv.component.CSVWrite) has a configuration error: header list must not be empty");
     }
 }
