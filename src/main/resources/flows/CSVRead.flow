@@ -27,14 +27,13 @@
     },
     {
       "implementor": "com.reedelk.csv.component.CSVRead",
-      "description": "CSV Read",
+      "description": "CSV Read my super duper CSV read co",
       "file": ""
     },
     {
       "implementor": "com.reedelk.core.component.PayloadSet",
       "description": "Payload Set",
-      "mimeType": "*/*",
-      "payload": "#[message.payload()[0].values[0]]"
+      "payload": "#[message.payload()[0].values]"
     }
   ]
 }
