@@ -26,8 +26,9 @@
       "payload": "#[[['A one', 'A two', 'A three'], ['B one', 'B two', 'B three']]]"
     },
     {
-      "implementor": "com.reedelk.csv.component.CSVWrite",
-      "description": "CSV Write"
+      "implementor": "com.reedelk.csv.component.CSVRead",
+      "description": "CSV Read",
+      "file": ""
     }
   ]
 }

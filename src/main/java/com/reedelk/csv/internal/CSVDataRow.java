@@ -14,19 +14,32 @@ public class CSVDataRow implements DataRow<String> {
         this.values = values;
     }
 
+    public CSVDataRow(List<String> values) {
+        this.headerNames = null;
+        this.values = values;
+    }
+
     @Override
     public int columnCount() {
-        return headerNames.size();
+        return values.size();
     }
 
     @Override
     public String columnName(int i) {
-        return headerNames.get(i);
+        if (headerNames != null) {
+            return headerNames.get(i);
+        } else {
+            throw new IllegalArgumentException("Header names not available");
+        }
     }
 
     @Override
     public List<String> columnNames() {
-        return headerNames;
+        if (headerNames != null) {
+            return headerNames;
+        } else {
+            throw new IllegalArgumentException("Header names not available");
+        }
     }
 
     @Override
@@ -36,6 +49,9 @@ public class CSVDataRow implements DataRow<String> {
 
     @Override
     public String getByColumnName(String columnName) {
+        if (headerNames == null) {
+            throw new IllegalArgumentException("Header names not available");
+        }
         int index = -1;
         for (int i = 0; i < headerNames.size(); i++) {
             if (headerNames.get(i).equals(columnName)) {
@@ -56,9 +72,15 @@ public class CSVDataRow implements DataRow<String> {
 
     @Override
     public String toString() {
-        return "CSVDataRow{" +
-                "headerNames=" + headerNames +
-                ", values=" + values +
-                '}';
+        if (headerNames != null) {
+            return "CSVDataRow{" +
+                    "headerNames=" + headerNames +
+                    ", values=" + values +
+                    '}';
+        } else {
+            return "CSVDataRow{" +
+                    ", values=" + values +
+                    '}';
+        }
     }
 }

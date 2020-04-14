@@ -1,32 +1,32 @@
 package com.reedelk.csv.component;
 
-import com.reedelk.csv.internal.CSVDataRow;
+import com.reedelk.csv.internal.read.CSVFormatBuilder;
+import com.reedelk.csv.internal.read.CSVParser;
+import com.reedelk.csv.internal.read.CSVReadAttribute;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.DynamicValueUtils;
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.PlatformException;
 import com.reedelk.runtime.api.flow.FlowContext;
+import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.DataRow;
+import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
-import static com.reedelk.runtime.api.commons.StringUtils.isNotNull;
-import static java.util.stream.Collectors.toList;
-
+@SuppressWarnings("rawtypes")
 @ModuleComponent("CSV Read")
 @Component(service = CSVRead.class, scope = ServiceScope.PROTOTYPE)
 public class CSVRead implements ProcessorSync {
@@ -36,96 +36,108 @@ public class CSVRead implements ProcessorSync {
     @Example("MONGODB_CSV")
     private Format format;
 
-    @Property("CSV File In")
+    @Property("CSV Input file")
     @Hint("/var/files/csv/my-csv-file.csv")
     @Description("File to read the CSV data from")
     private DynamicString file;
 
-    @Property("Delimiter")
-    @Group("Advanced")
+    @Property("CSV Delimiter")
+    @Hint(",")
+    @Example(",")
+    @DefaultValue(",")
+    @Description("The delimiter used in the input data to separate the data on each row.")
     private String delimiter;
 
-    @Property("First record as header")
-    @Group("Advanced")
-    private Boolean firstRecordAsHeader;
-
-    @Property("Allow missing column names")
-    @Group("Advanced")
-    private Boolean allowMissingColumnNames;
-
-    @Property("First record as header")
-    @Group("Advanced")
-    private Boolean allowDuplicateHeaderNames;
-
     @Property("Trim")
-    @Group("Advanced")
+    @Example("true")
+    @DefaultValue("false")
+    @Description("If true leading and trailing blanks are trimmed for each item in the data.")
     private Boolean trim;
 
     @Property("Ignore empty lines")
-    @Group("Advanced")
+    @Example("true")
+    @DefaultValue("false")
+    @Description("If true empty lines are ignored from the CSV data.")
     private Boolean ignoreEmptyLines;
+
+    @Property("First record as header")
+    @Example("true")
+    @DefaultValue("false")
+    @Description("Set this value to true if the CSV data contains data headers in the first line. " +
+            "Data header names can be used to retrieve data from the output data structure.")
+    private Boolean firstRecordAsHeader;
 
     @Reference
     ConverterService converter;
     @Reference
     ScriptEngineService scriptService;
 
+    private CSVFormat csvFormat;
+
+    @Override
+    public void initialize() {
+        csvFormat = CSVFormatBuilder.get()
+                .firstRecordAsHeader(firstRecordAsHeader)
+                .ignoreEmptyLines(ignoreEmptyLines)
+                .delimiter(delimiter)
+                .format(format)
+                .trim(trim)
+                .build();
+    }
+
     @Override
     public Message apply(FlowContext flowContext, Message message) {
-
-        CSVFormat format = Optional.ofNullable(this.format).orElse(Format.DEFAULT).format();
-        if (isNotNull(delimiter)) {
-            format = format.withDelimiter(delimiter.charAt(0));
-        }
-        if (firstRecordAsHeader != null && firstRecordAsHeader) {
-            format = format.withFirstRecordAsHeader();
-        }
-        if (allowMissingColumnNames != null && allowMissingColumnNames) {
-            format = format.withAllowMissingColumnNames();
-        }
-        if (trim != null && trim) {
-            format = format.withTrim();
-        }
-        if (ignoreEmptyLines != null && ignoreEmptyLines) {
-            format = format.withIgnoreEmptyLines();
-        }
-
-        Reader in;
         if (DynamicValueUtils.isNotNullOrBlank(file)) {
-            // We take it from the payload.
-            Optional<String> maybeFilePathAndName = scriptService.evaluate(file, flowContext, message);
-            String filePathAndName = maybeFilePathAndName.orElseThrow(() -> {
-                throw new PlatformException("File was empty.");
-            });
-            try {
-                in = new FileReader(filePathAndName);
-            } catch (FileNotFoundException exception) {
-                throw new PlatformException(exception.getMessage(), exception);
-            }
-
+            return readFromFile(flowContext, message);
         } else {
-            // We must convert the payload to a string.
-            Object payload = message.payload();
-            String payloadAsString = converter.convert(payload, String.class);
-            in = new StringReader(payloadAsString);
+            return readFromMessagePayload(message);
         }
+    }
 
-        // TODO: If first headers..then start from 1, otherwise not...
+    /**
+     * Note that we must convert the payload into a string if it is not already.
+     */
+    @SuppressWarnings("rawtypes")
+    private Message readFromMessagePayload(Message message) {
+        // We must convert the payload into a string if it is not already.
+        Object payload = message.payload();
+        String payloadAsString = converter.convert(payload, String.class);
 
-        try {
-            CSVParser parse = format.parse(in);
-            List<CSVRecord> records = parse.getRecords();
-            List<String> headerNames = parse.getHeaderNames();
-
-            List<DataRow> mapRows = csvRecordsToRows(records, headerNames);
-// TODO: Mime type text CSV ?
-            // TODO: Add attributes
+        try (Reader input = new StringReader(payloadAsString)) {
+            List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
             return MessageBuilder.get()
-                    .withList(mapRows, DataRow.class)
+                    .withList(dataRows, DataRow.class, MimeType.TEXT_CSV)
+                    .attributes(new DefaultMessageAttributes(CSVRead.class, ImmutableMap.of()))
+                    .build();
+        } catch (IOException exception) {
+            throw new PlatformException("Error");
+        }
+    }
+
+    private Message readFromFile(FlowContext flowContext, Message message) {
+        // We take it from the payload.
+        String filePathAndName = scriptService.evaluate(file, flowContext, message)
+                .orElseThrow(() -> {
+                    throw new PlatformException("File was empty.");
+                });
+
+        try (Reader input = new FileReader(filePathAndName)) {
+            List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
+
+            Map<String, Serializable> componentAttributes = ImmutableMap.of();
+            componentAttributes.put(CSVReadAttribute.FILE_NAME, filePathAndName);
+
+            return MessageBuilder.get()
+                    .withList(dataRows, DataRow.class, MimeType.TEXT_CSV)
+                    .attributes(new DefaultMessageAttributes(CSVRead.class, componentAttributes))
                     .build();
         } catch (IOException exception) {
             throw new PlatformException(exception.getMessage(), exception);
         }
+    }
+
+    public void setTrim(Boolean trim) {
+        this.trim = trim;
     }
 
     public void setFormat(Format format) {
@@ -140,33 +152,11 @@ public class CSVRead implements ProcessorSync {
         this.delimiter = delimiter;
     }
 
-    public void setFirstRecordAsHeader(Boolean firstRecordAsHeader) {
-        this.firstRecordAsHeader = firstRecordAsHeader;
-    }
-
-    public void setAllowMissingColumnNames(Boolean allowMissingColumnNames) {
-        this.allowMissingColumnNames = allowMissingColumnNames;
-    }
-
-    public void setAllowDuplicateHeaderNames(Boolean allowDuplicateHeaderNames) {
-        this.allowDuplicateHeaderNames = allowDuplicateHeaderNames;
-    }
-
-    public void setTrim(Boolean trim) {
-        this.trim = trim;
-    }
-
     public void setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
         this.ignoreEmptyLines = ignoreEmptyLines;
     }
 
-    private List<DataRow> csvRecordsToRows(List<CSVRecord> records, List<String> headerNames) {
-        return records.stream().map(record -> {
-            List<String> rowData = new ArrayList<>();
-            for (int i = 0; i < record.size(); i++) {
-                rowData.add(record.get(i));
-            }
-            return new CSVDataRow(headerNames, rowData);
-        }).collect(toList());
+    public void setFirstRecordAsHeader(Boolean firstRecordAsHeader) {
+        this.firstRecordAsHeader = firstRecordAsHeader;
     }
 }

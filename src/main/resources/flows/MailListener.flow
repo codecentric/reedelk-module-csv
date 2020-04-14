@@ -12,7 +12,7 @@
       "implementor": "com.reedelk.core.component.LoggerComponent",
       "description": "Logger",
       "level": "INFO",
-      "message": "#[message]"
+      "message": "#[message.payload()]"
     }
   ]
 }
