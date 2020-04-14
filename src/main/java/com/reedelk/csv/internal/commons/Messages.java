@@ -35,7 +35,8 @@ public class Messages {
 
         FILE_WRITE_ERROR("Could not write to CSV file=[%s], cause=[%s]."),
         FILE_PATH_EMPTY("Could not write to CSV file. The file path was empty (DynamicValue=[%s])."),
-        PAYLOAD_WRITE_ERROR("Could not write CSV into message payload, cause=[%s].");
+        PAYLOAD_WRITE_ERROR("Could not write CSV into message payload, cause=[%s]."),
+        PAYLOAD_TYPE_ERROR("The payload must contain a list, but type=[%s] was given.");
 
         private String msg;
 

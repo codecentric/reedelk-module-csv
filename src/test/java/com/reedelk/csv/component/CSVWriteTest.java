@@ -128,4 +128,39 @@ class CSVWriteTest {
         assertThat(thrown)
                 .hasMessage("CSVWrite (com.reedelk.csv.component.CSVWrite) has a configuration error: header list must not be empty");
     }
+
+    @Test
+    void shouldWriteEmptyWhenPayloadIsNull() {
+        // Given
+        csvWrite.initialize();
+
+        Message input = MessageBuilder.get()
+                .empty()
+                .build();
+
+        // When
+        Message actual = csvWrite.apply(context, input);
+
+        // Then
+        String csv = actual.payload();
+        assertThat(csv).isEqualTo("");
+    }
+
+    @Test
+    void shouldWriteEmptyWhenPayloadIsEmptyList() {
+        // Given
+        csvWrite.initialize();
+
+        List<List> rows = Collections.emptyList();
+
+        Message input = MessageBuilder.get()
+                .withList(rows, List.class)
+                .build();
+        // When
+        Message actual = csvWrite.apply(context, input);
+
+        // Then
+        String csv = actual.payload();
+        assertThat(csv).isEqualTo("");
+    }
 }
