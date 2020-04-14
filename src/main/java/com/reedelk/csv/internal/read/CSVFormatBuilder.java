@@ -3,6 +3,7 @@ package com.reedelk.csv.internal.read;
 import com.reedelk.csv.component.Format;
 import org.apache.commons.csv.CSVFormat;
 
+import java.util.List;
 import java.util.Optional;
 
 public class CSVFormatBuilder {
@@ -10,7 +11,9 @@ public class CSVFormatBuilder {
     private Format format;
     private Character delimiter;
     private Boolean trim;
+    private Boolean includeHeaders;
     private Boolean firstRecordAsHeader;
+    private List<String> headers;
 
     private CSVFormatBuilder() {
     }
@@ -19,18 +22,28 @@ public class CSVFormatBuilder {
         return new CSVFormatBuilder();
     }
 
-    public CSVFormatBuilder format(Format format) {
-        this.format = format;
-        return this;
-    }
-
     public CSVFormatBuilder trim(Boolean trim) {
         this.trim = trim;
         return this;
     }
 
+    public CSVFormatBuilder format(Format format) {
+        this.format = format;
+        return this;
+    }
+
+    public CSVFormatBuilder headers(List<String> headers) {
+        this.headers = headers;
+        return this;
+    }
+
     public CSVFormatBuilder delimiter(Character delimiter) {
         this.delimiter = delimiter;
+        return this;
+    }
+
+    public CSVFormatBuilder includeHeaders(Boolean includeHeaders) {
+        this.includeHeaders = includeHeaders;
         return this;
     }
 

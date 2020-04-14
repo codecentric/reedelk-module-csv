@@ -50,7 +50,7 @@ public class CSVRead implements ProcessorSync {
 
     @Property("CSV Delimiter")
     @Hint(",")
-    @Example(",")
+    @Example(":")
     @DefaultValue(",")
     @Description("The delimiter used in the input data to separate the data on each row.")
     private Character delimiter;

@@ -27,13 +27,25 @@
     },
     {
       "implementor": "com.reedelk.csv.component.CSVRead",
-      "description": "CSV Read my super duper CSV read co"
+      "description": "CSV Read my super duper CSV read co",
+      "file": ""
     },
     {
       "implementor": "com.reedelk.core.component.PayloadSet",
       "description": "Payload Set",
       "mimeType": "text/plain",
       "payload": "#[message.payload()]"
+    },
+    {
+      "implementor": "com.reedelk.csv.component.CSVWrite",
+      "description": "CSV Write",
+      "includeHeaders": true,
+      "headers": [
+        "Player",
+        "Game",
+        "Time",
+        "Another"
+      ]
     }
   ]
 }
