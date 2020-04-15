@@ -1,16 +1,10 @@
 package com.reedelk.csv.internal.commons;
 
+import com.reedelk.runtime.api.commons.FormattedMessage;
+
 public class Messages {
 
     private Messages() {
-    }
-
-    private static String formatMessage(String template, Object ...args) {
-        return String.format(template, args);
-    }
-
-    interface FormattedMessage {
-        String format(Object ...args);
     }
 
     public enum CSVRead implements FormattedMessage {
@@ -19,15 +13,15 @@ public class Messages {
         FILE_PATH_EMPTY("Could not read from CSV file. The file path was empty (DynamicValue=[%s])."),
         PAYLOAD_READ_ERROR("Could not read CSV payload, cause=[%s].");
 
-        private String msg;
+        private String message;
 
-        CSVRead(String msg) {
-            this.msg = msg;
+        CSVRead(String message) {
+            this.message = message;
         }
 
         @Override
-        public String format(Object... args) {
-            return formatMessage(msg, args);
+        public String template() {
+            return message;
         }
     }
 
@@ -38,15 +32,15 @@ public class Messages {
         PAYLOAD_WRITE_ERROR("Could not write CSV into message payload, cause=[%s]."),
         PAYLOAD_TYPE_ERROR("The payload must contain a list, but type=[%s] was given.");
 
-        private String msg;
+        private String message;
 
-        CSVWrite(String msg) {
-            this.msg = msg;
+        CSVWrite(String message) {
+            this.message = message;
         }
 
         @Override
-        public String format(Object... args) {
-            return formatMessage(msg, args);
+        public String template() {
+            return message;
         }
     }
 }
