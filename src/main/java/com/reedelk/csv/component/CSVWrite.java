@@ -10,7 +10,6 @@ import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.flow.FlowContext;
-import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
@@ -113,7 +112,7 @@ public class CSVWrite implements ProcessorSync {
 
             CSVWriter.write(message, csvPrinter, actualIncludeHeaders, headers);
             String csv = writer.toString();
-            return MessageBuilder.get()
+            return MessageBuilder.get(CSVWrite.class)
                     .withString(csv, MimeType.TEXT_CSV)
                     .build();
 
@@ -130,8 +129,8 @@ public class CSVWrite implements ProcessorSync {
             CSVWriter.write(message, csvPrinter, actualIncludeHeaders, headers);
             Map<String, Serializable> componentAttributes =
                     ImmutableMap.of(CSVWriteAttribute.FILE_NAME, filePathAndName);
-            return MessageBuilder.get()
-                    .attributes(new DefaultMessageAttributes(CSVWrite.class, componentAttributes))
+            return MessageBuilder.get(CSVWrite.class)
+                    .attributes(componentAttributes)
                     .empty()
                     .build();
 
@@ -141,23 +140,23 @@ public class CSVWrite implements ProcessorSync {
         }
     }
 
-    public void setFormat(Format format) {
-        this.format = format;
-    }
-
-    public void setFile(DynamicString file) {
-        this.file = file;
-    }
-
-    public void setHeaders(List<String> headers) {
-        this.headers = headers;
+    public void setIncludeHeaders(Boolean includeHeaders) {
+        this.includeHeaders = includeHeaders;
     }
 
     public void setDelimiter(Character delimiter) {
         this.delimiter = delimiter;
     }
 
-    public void setIncludeHeaders(Boolean includeHeaders) {
-        this.includeHeaders = includeHeaders;
+    public void setHeaders(List<String> headers) {
+        this.headers = headers;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    public void setFile(DynamicString file) {
+        this.file = file;
     }
 }

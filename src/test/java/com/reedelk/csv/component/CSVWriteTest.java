@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,7 +59,7 @@ class CSVWriteTest {
         List<String> row2 = Arrays.asList("four", "five", "six");
         List<List> rows = Arrays.asList(row1, row2);
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withList(rows, List.class)
                 .build();
 
@@ -85,7 +84,7 @@ class CSVWriteTest {
         List<String> row2 = Arrays.asList("four", "five", "six");
         List<List> rows = Arrays.asList(row1, row2);
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withList(rows, List.class)
                 .build();
 
@@ -134,7 +133,7 @@ class CSVWriteTest {
         // Given
         csvWrite.initialize();
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .empty()
                 .build();
 
@@ -153,7 +152,7 @@ class CSVWriteTest {
 
         List<List> rows = Collections.emptyList();
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withList(rows, List.class)
                 .build();
         // When
@@ -175,7 +174,7 @@ class CSVWriteTest {
 
         List<CSVDataRow> rows = Arrays.asList(row1, row2);
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withList(rows, CSVDataRow.class)
                 .build();
 
@@ -203,7 +202,7 @@ class CSVWriteTest {
 
         List<CSVDataRow> rows = Arrays.asList(row1, row2);
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withList(rows, CSVDataRow.class)
                 .build();
 
@@ -232,7 +231,7 @@ class CSVWriteTest {
         List<String> row2 = Arrays.asList("four", "five");
         List<List> rows = Arrays.asList(row1, row2);
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withList(rows, List.class)
                 .build();
 

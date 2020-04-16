@@ -10,7 +10,6 @@ import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.flow.FlowContext;
-import com.reedelk.runtime.api.message.DefaultMessageAttributes;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.DataRow;
@@ -126,14 +125,18 @@ public class CSVRead implements ProcessorSync {
     @SuppressWarnings("rawtypes")
     private Message parse(Map<String, Serializable> componentAttributes, Reader input) {
         List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
-        return MessageBuilder.get()
+        return MessageBuilder.get(CSVRead.class)
                 .withList(dataRows, DataRow.class)
-                .attributes(new DefaultMessageAttributes(CSVRead.class, componentAttributes))
+                .attributes(componentAttributes)
                 .build();
     }
 
-    public void setTrim(Boolean trim) {
-        this.trim = trim;
+    public void setFirstRecordAsHeader(Boolean firstRecordAsHeader) {
+        this.firstRecordAsHeader = firstRecordAsHeader;
+    }
+
+    public void setDelimiter(Character delimiter) {
+        this.delimiter = delimiter;
     }
 
     public void setFormat(Format format) {
@@ -144,11 +147,7 @@ public class CSVRead implements ProcessorSync {
         this.file = file;
     }
 
-    public void setDelimiter(Character delimiter) {
-        this.delimiter = delimiter;
-    }
-
-    public void setFirstRecordAsHeader(Boolean firstRecordAsHeader) {
-        this.firstRecordAsHeader = firstRecordAsHeader;
+    public void setTrim(Boolean trim) {
+        this.trim = trim;
     }
 }

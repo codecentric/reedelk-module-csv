@@ -60,7 +60,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_HEADER.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -86,7 +86,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITHOUT_HEADER.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -112,7 +112,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_EMPTY_LINES.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -137,7 +137,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_NOT_TRIMMED_CONTENT.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -161,7 +161,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_NO_RECORDS.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -181,7 +181,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_NO_RECORDS_AND_HEADERS.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -202,7 +202,7 @@ class CSVReadTest {
         csvRead.initialize();
 
         String csvContent = CSVs.SAMPLE_WITH_CUSTOM_DELIMITER.string();
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .withString(csvContent, MimeType.TEXT_PLAIN)
                 .build();
 
@@ -233,7 +233,7 @@ class CSVReadTest {
         csvRead.setFile(dynamicFile);
         csvRead.initialize();
 
-        Message input = MessageBuilder.get()
+        Message input = MessageBuilder.get(TestComponent.class)
                 .empty()
                 .build();
 
