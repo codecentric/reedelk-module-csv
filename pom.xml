@@ -83,6 +83,26 @@
 
     <build>
         <plugins>
+            <!-- Copy the artifact into the runtime/modules directory -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <tasks>
+                        <copy file="target/${project.artifactId}-${project.version}.jar"
+                              tofile="../runtime/runtime-launcher/modules/${project.artifactId}-${project.version}.jar">
+                        </copy>
+                    </tasks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- JaCoCo test coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -105,4 +125,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
