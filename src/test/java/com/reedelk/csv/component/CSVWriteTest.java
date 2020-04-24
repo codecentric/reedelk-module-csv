@@ -3,7 +3,7 @@ package com.reedelk.csv.component;
 import com.reedelk.csv.internal.CSVDataRow;
 import com.reedelk.csv.internal.CSVMetadata;
 import com.reedelk.runtime.api.converter.ConverterService;
-import com.reedelk.runtime.api.exception.ConfigurationException;
+import com.reedelk.runtime.api.exception.ComponentConfigurationException;
 import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageBuilder;
@@ -105,7 +105,7 @@ class CSVWriteTest {
         csvWrite.setIncludeHeaders(true);
 
         // Expect
-        ConfigurationException thrown = assertThrows(ConfigurationException.class,
+        ComponentConfigurationException thrown = assertThrows(ComponentConfigurationException.class,
                 () -> csvWrite.initialize());
 
         // Then
@@ -120,7 +120,7 @@ class CSVWriteTest {
         csvWrite.setIncludeHeaders(true);
 
         // Expect
-        ConfigurationException thrown = assertThrows(ConfigurationException.class,
+        ComponentConfigurationException thrown = assertThrows(ComponentConfigurationException.class,
                 () -> csvWrite.initialize());
 
         // Then
