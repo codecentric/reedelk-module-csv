@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.reedelk.csv.internal.commons.Messages.CSVWrite.*;
-import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireNotNull;
-import static com.reedelk.runtime.api.commons.ConfigurationPreconditions.requireTrue;
+import static com.reedelk.runtime.api.commons.ComponentPrecondition.Configuration.requireNotNull;
+import static com.reedelk.runtime.api.commons.ComponentPrecondition.Configuration.requireTrue;
 
 @ModuleComponent("CSV Write")
 @Description("The CSV Write component can write CSV data to the file system " +
