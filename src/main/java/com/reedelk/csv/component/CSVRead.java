@@ -1,16 +1,16 @@
 package com.reedelk.csv.component;
 
 import com.reedelk.csv.internal.CSVFormatBuilder;
+import com.reedelk.csv.internal.attribute.CSVAttributes;
 import com.reedelk.csv.internal.exception.CSVReadException;
 import com.reedelk.csv.internal.read.CSVParser;
-import com.reedelk.csv.internal.read.CSVReadAttribute;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.DynamicValueUtils;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.DataRow;
 import com.reedelk.runtime.api.script.ScriptEngineService;
@@ -20,9 +20,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
-import java.util.Map;
 
 import static com.reedelk.csv.internal.commons.Messages.CSVRead.*;
 
@@ -102,9 +104,9 @@ public class CSVRead implements ProcessorSync {
     }
 
     private Message readFromMessagePayload(String payloadAsString) {
-        Map<String, Serializable> componentAttributes = ImmutableMap.of();
+        MessageAttributes attributes = new CSVAttributes();
         try (Reader input = new StringReader(payloadAsString)) {
-            return parse(componentAttributes, input);
+            return parse(attributes, input);
         } catch (IOException exception) {
             String error = PAYLOAD_READ_ERROR.format(exception.getMessage());
             throw new CSVReadException(error, exception);
@@ -112,10 +114,9 @@ public class CSVRead implements ProcessorSync {
     }
 
     private Message readFromFile(String filePathAndName) {
-        Map<String, Serializable> componentAttributes =
-                ImmutableMap.of(CSVReadAttribute.FILE_NAME, filePathAndName);
+        MessageAttributes attributes = new CSVAttributes(filePathAndName);
         try (Reader input = new FileReader(filePathAndName)) {
-            return parse(componentAttributes, input);
+            return parse(attributes, input);
         } catch (IOException exception) {
             String error = FILE_READ_ERROR.format(filePathAndName, exception.getMessage());
             throw new CSVReadException(error, exception);
@@ -123,11 +124,11 @@ public class CSVRead implements ProcessorSync {
     }
 
     @SuppressWarnings("rawtypes")
-    private Message parse(Map<String, Serializable> componentAttributes, Reader input) {
+    private Message parse(MessageAttributes attributes, Reader input) {
         List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
         return MessageBuilder.get(CSVRead.class)
                 .withList(dataRows, DataRow.class)
-                .attributes(componentAttributes)
+                .attributes(attributes)
                 .build();
     }
 

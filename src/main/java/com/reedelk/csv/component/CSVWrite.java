@@ -1,16 +1,16 @@
 package com.reedelk.csv.component;
 
 import com.reedelk.csv.internal.CSVFormatBuilder;
+import com.reedelk.csv.internal.attribute.CSVAttributes;
 import com.reedelk.csv.internal.exception.CSVWriteException;
-import com.reedelk.csv.internal.write.CSVWriteAttribute;
 import com.reedelk.csv.internal.write.CSVWriter;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.DynamicValueUtils;
-import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.component.ProcessorSync;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.Message;
+import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
 import com.reedelk.runtime.api.message.content.MimeType;
 import com.reedelk.runtime.api.script.ScriptEngineService;
@@ -23,10 +23,8 @@ import org.osgi.service.component.annotations.ServiceScope;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.reedelk.csv.internal.commons.Messages.CSVWrite.*;
@@ -126,11 +124,13 @@ public class CSVWrite implements ProcessorSync {
         try (FileWriter writer = new FileWriter(filePathAndName);
              CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
 
+
             CSVWriter.write(message, csvPrinter, actualIncludeHeaders, headers);
-            Map<String, Serializable> componentAttributes =
-                    ImmutableMap.of(CSVWriteAttribute.FILE_NAME, filePathAndName);
+
+            MessageAttributes attributes = new CSVAttributes(filePathAndName);
+
             return MessageBuilder.get(CSVWrite.class)
-                    .attributes(componentAttributes)
+                    .attributes(attributes)
                     .empty()
                     .build();
 
