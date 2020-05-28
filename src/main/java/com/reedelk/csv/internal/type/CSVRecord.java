@@ -1,8 +1,11 @@
 package com.reedelk.csv.internal.type;
 
 import com.reedelk.runtime.api.annotation.Type;
+import com.reedelk.runtime.api.exception.PlatformException;
 
 import java.util.*;
+
+import static java.lang.String.format;
 
 @Type(displayName = "CSVRecord", mapKeyType = String.class, mapValueType = String.class)
 public class CSVRecord extends HashMap<String, String> {
@@ -37,6 +40,9 @@ public class CSVRecord extends HashMap<String, String> {
 
     @Override
     public String get(Object key) {
+        if (!headerNameIndexMap.containsKey(key)) {
+            throw new PlatformException(format("Could not find CSV header column named=[%s]", key));
+        }
         Integer valueIndex = headerNameIndexMap.get(key);
         return values.get(valueIndex);
     }
