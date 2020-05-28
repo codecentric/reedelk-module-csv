@@ -1,7 +1,10 @@
 package com.reedelk.csv.internal.type;
 
+import com.reedelk.runtime.api.annotation.Type;
+
 import java.util.*;
 
+@Type(displayName = "CSVRecord", mapKeyType = String.class, mapValueType = String.class)
 public class CSVRecord extends HashMap<String, String> {
 
     private final List<String> values;
