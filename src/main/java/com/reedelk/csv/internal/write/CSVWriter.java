@@ -1,14 +1,14 @@
 package com.reedelk.csv.internal.write;
 
 import com.reedelk.runtime.api.message.Message;
-import com.reedelk.runtime.api.message.content.DataRow;
 import com.reedelk.runtime.api.message.content.ListContent;
 import com.reedelk.runtime.api.message.content.TypedContent;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.reedelk.csv.internal.commons.Preconditions.checkSuitableTypeOrThrow;
 
@@ -17,7 +17,7 @@ public class CSVWriter {
     private CSVWriter() {
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     public static void write(Message message, CSVPrinter csvPrinter, boolean includeHeaders, List<String> headers) throws IOException {
         // We must have a list of lists
         TypedContent<?,?> content = message.content();
@@ -39,30 +39,22 @@ public class CSVWriter {
 
         for (Object object : list.data()) {
 
-            if (object == null) continue;
-
             if (object instanceof List) {
                 csvPrinter.printRecord((List<Object>) object);
-
-            } else if (object instanceof DataRow) {
-                // If the object has type DataRow, we might want to write only a few headers,
-                // therefore for each element in the data row we find the matching column index
-                // of the wanted header name of the value and then add it to the list of items
-                // to print in the record.
-                DataRow row = (DataRow) object;
+            } else if (object instanceof Map) {
+                Map<?,?> map = (Map<?,?>) object;
                 if (includeHeaders) {
-                    Serializable[] printRow = new Serializable[headers.size()];
-                    for (int i = 0; i < headers.size(); i++) {
-                        String headerName = headers.get(i);
-                        Serializable valueForColumn = row.getByColumnName(headerName);
-                        printRow[i] = valueForColumn;
+                    List<Object> recordWithValuesOrderedByHeader = new ArrayList<>();
+                    for (String header : headers) {
+                        Object theValue = map.get(header);
+                        recordWithValuesOrderedByHeader.add(theValue);
                     }
-                    csvPrinter.printRecord(printRow);
+                    csvPrinter.printRecord(recordWithValuesOrderedByHeader);
                 } else {
-                    csvPrinter.printRecord(row.values());
+                    csvPrinter.printRecord(map.values());
                 }
-
             } else {
+                // Single valued record
                 csvPrinter.printRecord(object);
             }
         }

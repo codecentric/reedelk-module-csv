@@ -1,7 +1,7 @@
 package com.reedelk.csv.component;
 
-import com.reedelk.csv.internal.CSVDataRow;
-import com.reedelk.csv.internal.CSVMetadata;
+
+import com.reedelk.runtime.api.commons.ImmutableMap;
 import com.reedelk.runtime.api.converter.ConverterService;
 import com.reedelk.runtime.api.exception.ComponentConfigurationException;
 import com.reedelk.runtime.api.flow.FlowContext;
@@ -50,6 +50,7 @@ class CSVWriteTest {
                 .convert(any(Object.class), any(Class.class));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     void shouldCorrectlyWriteIntoMessagePayloadWithoutHeaders() {
         // Given
@@ -73,6 +74,7 @@ class CSVWriteTest {
                 "four,five,six\r\n");
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     void shouldCorrectlyWriteIntoMessagePayloadWithHeaders() {
         // Given
@@ -105,8 +107,8 @@ class CSVWriteTest {
         csvWrite.setIncludeHeaders(true);
 
         // Expect
-        ComponentConfigurationException thrown = assertThrows(ComponentConfigurationException.class,
-                () -> csvWrite.initialize());
+        ComponentConfigurationException thrown =
+                assertThrows(ComponentConfigurationException.class, () -> csvWrite.initialize());
 
         // Then
         assertThat(thrown)
@@ -145,6 +147,7 @@ class CSVWriteTest {
         assertThat(csv).isEqualTo("");
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     void shouldWriteEmptyWhenPayloadIsEmptyList() {
         // Given
@@ -163,19 +166,19 @@ class CSVWriteTest {
         assertThat(csv).isEqualTo("");
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     void shouldWriteDataRowRecordsWithoutHeaders() {
         // Given
         csvWrite.initialize();
 
-        CSVMetadata metadata = new CSVMetadata();
-        CSVDataRow row1 = new CSVDataRow(metadata, Arrays.asList("one", "two"));
-        CSVDataRow row2 = new CSVDataRow(metadata, Arrays.asList("three", "four"));
+        List<String> row1 = Arrays.asList("one", "two");
+        List<String> row2 = Arrays.asList("three", "four");
 
-        List<CSVDataRow> rows = Arrays.asList(row1, row2);
+        List<List> rows = Arrays.asList(row1, row2);
 
         Message input = MessageBuilder.get(TestComponent.class)
-                .withList(rows, CSVDataRow.class)
+                .withList(rows, List.class)
                 .build();
 
         // When
@@ -188,6 +191,7 @@ class CSVWriteTest {
                 "three,four\r\n");
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     void shouldWriteDataRowRecordsWithHeaders() {
         // Given
@@ -195,15 +199,13 @@ class CSVWriteTest {
         csvWrite.setIncludeHeaders(true);
         csvWrite.initialize();
 
-        List<String> headers = Arrays.asList("Header 1", "Header 2", "Header 3");
-        CSVMetadata metadata = new CSVMetadata(headers);
-        CSVDataRow row1 = new CSVDataRow(metadata, Arrays.asList("one", "two", "three"));
-        CSVDataRow row2 = new CSVDataRow(metadata, Arrays.asList("four", "five", "six"));
+        Map<String,String> row1 = ImmutableMap.of("Header 1", "one", "Header 2", "two", "Header 3", "three");
+        Map<String,String> row2 = ImmutableMap.of("Header 1", "four", "Header 2", "five", "Header 3", "six");
 
-        List<CSVDataRow> rows = Arrays.asList(row1, row2);
+        List<Map> rows = Arrays.asList(row1, row2);
 
         Message input = MessageBuilder.get(TestComponent.class)
-                .withList(rows, CSVDataRow.class)
+                .withList(rows, Map.class)
                 .build();
 
         // When
@@ -217,6 +219,7 @@ class CSVWriteTest {
                 "four,six\r\n");
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     void shouldWriteDataToFile() throws IOException {
         // Given

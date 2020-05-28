@@ -3,7 +3,10 @@ package com.reedelk.csv.component;
 import com.reedelk.csv.internal.CSVFormatBuilder;
 import com.reedelk.csv.internal.attribute.CSVAttributes;
 import com.reedelk.csv.internal.exception.CSVReadException;
-import com.reedelk.csv.internal.read.CSVParser;
+import com.reedelk.csv.internal.read.CSVParserWithHeader;
+import com.reedelk.csv.internal.read.CSVParserWithoutHeader;
+import com.reedelk.csv.internal.type.CSVRecord;
+import com.reedelk.csv.internal.type.ListOfCSVRecord;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.DynamicValueUtils;
 import com.reedelk.runtime.api.component.ProcessorSync;
@@ -12,9 +15,10 @@ import com.reedelk.runtime.api.flow.FlowContext;
 import com.reedelk.runtime.api.message.Message;
 import com.reedelk.runtime.api.message.MessageAttributes;
 import com.reedelk.runtime.api.message.MessageBuilder;
-import com.reedelk.runtime.api.message.content.DataRow;
 import com.reedelk.runtime.api.script.ScriptEngineService;
 import com.reedelk.runtime.api.script.dynamicvalue.DynamicString;
+import com.reedelk.runtime.api.type.ListOfListOfString;
+import com.reedelk.runtime.api.type.ListOfString;
 import org.apache.commons.csv.CSVFormat;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -25,11 +29,19 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Optional;
 
 import static com.reedelk.csv.internal.commons.Messages.CSVRead.*;
 
 
 @ModuleComponent("CSV Read")
+@ComponentOutput(
+        attributes = CSVAttributes.class,
+        payload = { ListOfCSVRecord.class, ListOfListOfString.class },
+        description = "List of CSV records containing the data read from the file system or payload.")
+@ComponentInput(
+        payload = Object.class,
+        description = "The CSV data to be parsed. If the input is not a string it will be converted to a string before parsing it into a list of CSV records.")
 @Description("The CSV Read component can read a CSV file from the file system " +
         "or from the message payload data. There are several supported CSV formats such as " +
         "Excel, MongoDB and MySQL. The component allows to configure the data delimiter " +
@@ -123,13 +135,23 @@ public class CSVRead implements ProcessorSync {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private Message parse(MessageAttributes attributes, Reader input) {
-        List<DataRow> dataRows = CSVParser.from(csvFormat, input, firstRecordAsHeader);
-        return MessageBuilder.get(CSVRead.class)
-                .withList(dataRows, DataRow.class)
-                .attributes(attributes)
-                .build();
+        boolean isFirstRecordHeader = Optional.ofNullable(firstRecordAsHeader).orElse(false);
+        if (isFirstRecordHeader) {
+            List<com.reedelk.csv.internal.type.CSVRecord> dataRows =
+                    CSVParserWithHeader.from(csvFormat, input);
+            return MessageBuilder.get(CSVRead.class)
+                    .withList(dataRows, CSVRecord.class)
+                    .attributes(attributes)
+                    .build();
+        } else {
+            List<ListOfString> dataRows =
+                    CSVParserWithoutHeader.from(csvFormat, input);
+            return MessageBuilder.get(CSVRead.class)
+                    .withList(dataRows, ListOfString.class)
+                    .attributes(attributes)
+                    .build();
+        }
     }
 
     public void setFirstRecordAsHeader(Boolean firstRecordAsHeader) {
