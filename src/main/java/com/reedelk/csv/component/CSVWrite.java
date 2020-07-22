@@ -3,6 +3,9 @@ package com.reedelk.csv.component;
 import com.reedelk.csv.internal.CSVFormatBuilder;
 import com.reedelk.csv.internal.attribute.CSVAttributes;
 import com.reedelk.csv.internal.exception.CSVWriteException;
+import com.reedelk.csv.internal.type.ListOfListOfObject;
+import com.reedelk.csv.internal.type.ListOfMap;
+import com.reedelk.csv.internal.type.ListOfObject;
 import com.reedelk.csv.internal.write.CSVWriter;
 import com.reedelk.runtime.api.annotation.*;
 import com.reedelk.runtime.api.commons.DynamicValueUtils;
@@ -37,7 +40,7 @@ import static com.reedelk.runtime.api.commons.ComponentPrecondition.Configuratio
         payload = { Void.class, String.class },
         description = "The CSV data as string if the CSV output file expression was not specified, otherwise null.")
 @ComponentInput(
-        payload = Object.class,
+        payload = { ListOfListOfObject.class, ListOfMap.class, ListOfObject.class },
         description = "The input payload is used to evaluate the CSV Output File expression.")
 @Description("The CSV Write component can write CSV data to the file system " +
         "or into the message payload data. There are several supported CSV formats such as " +

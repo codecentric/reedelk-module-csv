@@ -7,7 +7,7 @@ import java.util.*;
 
 import static java.lang.String.format;
 
-@Type(displayName = "CSVRecord", mapKeyType = String.class, mapValueType = String.class)
+@Type(mapKeyType = String.class, mapValueType = String.class)
 public class CSVRecord extends HashMap<String, String> {
 
     private final List<String> values;
