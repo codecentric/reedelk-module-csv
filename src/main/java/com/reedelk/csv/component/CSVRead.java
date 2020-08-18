@@ -40,7 +40,7 @@ import static com.reedelk.csv.internal.commons.Messages.CSVRead.*;
         payload = { ListOfCSVRecord.class, ListOfListOfString.class },
         description = "List of CSV records containing the data read from the file system or payload.")
 @ComponentInput(
-        payload = Object.class,
+        payload = String.class,
         description = "The CSV data to be parsed. If the input is not a string it will be converted to a string before parsing it into a list of CSV records.")
 @Description("The CSV Read component can read a CSV file from the file system " +
         "or from the message payload data. There are several supported CSV formats such as " +
