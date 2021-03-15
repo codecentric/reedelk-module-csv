@@ -6,13 +6,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.reedelk</groupId>
+        <groupId>de.codecentric.reedelk</groupId>
         <artifactId>module-parent</artifactId>
-        <version>1.0.6</version>
+        <version>1.1.0</version>
     </parent>
 
     <packaging>bundle</packaging>
-    <version>1.0.6</version>
+    <version>1.1.0</version>
     <artifactId>module-csv</artifactId>
 
     <properties>
@@ -25,21 +25,6 @@
         <junit.version>5.5.2</junit.version>
         <jacoco.version>0.8.2</jacoco.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>reedelk-repository</id>
-            <name>Reedelk Repository</name>
-            <url>https://www.reedelk.com/maven/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>reedelk-plugin-repository</id>
-            <name>Reedelk Plugin Repository</name>
-            <url>https://www.reedelk.com/maven/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
         <dependency>
