@@ -16,7 +16,7 @@
     <artifactId>module-csv</artifactId>
 
     <properties>
-        <assertj.version>3.11.1</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <commons.csv.version>1.8</commons.csv.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
